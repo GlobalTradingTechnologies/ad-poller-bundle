@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="gtt.ad_poller.poller_collection" class="Gtt\ADPoller\PollerCollection"/>
+
+        <service id="gtt.ad_poller.poll_command" class="Gtt\ADPoller\Command\PollCommand">
+            <argument type="service" id="gtt.ad_poller.poller_collection" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="gtt.ad_poller.poller.prototype" class="Gtt\ADPoller\Poller" public="false" abstract="true" />
+
+        <service id="gtt.ad_poller.ldap.prototype" class="Zend\Ldap\Ldap" public="false" abstract="true" />
+
+        <service id="gtt.ad_poller.ldap.configurator.prototype"
+                 class="Gtt\Bundle\AdPollerBundle\DependencyInjection\LdapConfigurator"
+                 public="false"
+                 abstract="true" />
+
+        <service
+                id="gtt.ad_poller.synchronizer.events.prototype"
+                class="Gtt\ADPoller\Sync\Events\EventSynchronizer"
+                public="false"
+                abstract="true">
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+    </services>
+</container>

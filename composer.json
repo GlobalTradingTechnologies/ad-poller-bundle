@@ -1,0 +1,25 @@
+{
+    "name": "gtt/ad-poller-bundle",
+    "description": "Bundle integration of gtt/ad-poller component into Symfony2 ecosystem",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Medvedev (fduch)",
+            "email": "alex.medwedew@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "symfony/framework-bundle": "^2.3|^3.0",
+        "gtt/ad-poller": "^1.0@dev"
+    },
+    "autoload": {
+        "psr-4": { "Gtt\\Bundle\\AdPollerBundle\\": "" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    }
+}
