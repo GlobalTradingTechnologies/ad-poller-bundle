@@ -123,7 +123,8 @@ class AdPollerExtension extends Extension
                 new Reference($synchronizerDefinitionId),
                 new Reference($ldapDefinitionId),
                 new Reference(sprintf('doctrine.orm.%s_entity_manager', $pollerConfig['entity_manager'])),
-                $pollerConfig['entry_filter'],
+                $pollerConfig['entry_filter']['full_sync'],
+                $pollerConfig['entry_filter']['incremental_sync'],
                 $pollerConfig['entry_attributes_to_fetch'],
                 $pollerConfig['detect_deleted'],
                 $name
