@@ -41,22 +41,54 @@ class AdPollerExtension extends Extension
 
             $pollerCollectionDefinition = $container->getDefinition('gtt.ad_poller.poller_collection');
             foreach ($config['pollers'] as $name => $pollerConfig) {
-                $ldapDefinitionId         = $this->createLdap($container, $name, $pollerConfig['ldap']);
+                $fetcherDefinitionId      = $this->createFetcher($container, $name, $pollerConfig);
                 $synchronizerDefinitionId = $this->createSynchronizer($container, $name, $pollerConfig['sync']);
-                $pollerDefinitionId       = $this->createPoller($container, $name, $ldapDefinitionId, $synchronizerDefinitionId, $pollerConfig);
+                $pollerDefinitionId       = $this->createPoller($container, $name, $fetcherDefinitionId, $synchronizerDefinitionId, $pollerConfig);
                 $pollerCollectionDefinition->addMethodCall('addPoller', [new Reference($pollerDefinitionId)]);
             }
         }
     }
 
     /**
+     * Creates an Fetcher definition
+     *
+     * @param ContainerBuilder $container container builder
+     * @param string           $name      name of the poller
+     * @param array            $config    fetcher config
+     *
+     * @return string definition id
+     */
+    private function createFetcher(ContainerBuilder $container, $name, array $config)
+    {
+        $definition = new DefinitionDecorator('gtt.ad_poller.ldap.fetcher.prototype');
+
+        $ldapDefinitionId = $this->createLdap($container, $name, $config['ldap']);
+
+        $definition->setArguments([
+            new Reference($ldapDefinitionId),
+            $config['entry_filter']['full_sync'],
+            $config['entry_filter']['incremental_sync'],
+            $config['entry_attributes_to_fetch'],
+        ]);
+
+        if ($config['ldap_search_server_controls']) {
+            $definition->addMethodCall('setLdapSearchOptions', [LDAP_OPT_SERVER_CONTROLS, $config['ldap_search_server_controls']]);
+        }
+
+        $id = 'gtt.ad_poller.ldap.fetcher' . $name;
+        $container->setDefinition($id, $definition);
+
+        return $id;
+    }
+
+    /**
      * Creates an LDAP definition
      *
      * @param ContainerBuilder $container container builder
-     * @param string           $name      name of ldap connector
+     * @param string           $name      name of the poller
      * @param array            $config    config for ldap connector
      *
-     * @return string
+     * @return string definition id
      */
     private function createLdap(ContainerBuilder $container, $name, array $config)
     {
@@ -109,31 +141,24 @@ class AdPollerExtension extends Extension
      *
      * @param ContainerBuilder $container
      * @param string           $name
-     * @param string           $ldapDefinitionId
+     * @param string           $fetcherDefinitionId
      * @param string           $synchronizerDefinitionId
      * @param array            $pollerConfig
      *
      * @return string
      */
-    private function createPoller(ContainerBuilder $container, $name, $ldapDefinitionId, $synchronizerDefinitionId, $pollerConfig)
+    private function createPoller(ContainerBuilder $container, $name, $fetcherDefinitionId, $synchronizerDefinitionId, $pollerConfig)
     {
         $pollerDefinition = new DefinitionDecorator('gtt.ad_poller.poller.prototype');
         $pollerDefinition->setArguments(
             [
+                new Reference($fetcherDefinitionId),
                 new Reference($synchronizerDefinitionId),
-                new Reference($ldapDefinitionId),
                 new Reference(sprintf('doctrine.orm.%s_entity_manager', $pollerConfig['entity_manager'])),
-                $pollerConfig['entry_filter']['full_sync'],
-                $pollerConfig['entry_filter']['incremental_sync'],
-                $pollerConfig['entry_attributes_to_fetch'],
                 $pollerConfig['detect_deleted'],
                 $name
             ]
         );
-
-        if ($pollerConfig['ldap_search_server_controls']) {
-            $pollerDefinition->addMethodCall('setLdapSearchOptions', [LDAP_OPT_SERVER_CONTROLS, $pollerConfig['ldap_search_server_controls']]);
-        }
 
         $id = "gtt.ad_poller.poller.$name";
         $container->setDefinition($id, $pollerDefinition);

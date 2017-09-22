@@ -90,7 +90,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                             ->booleanNode('detect_deleted')
                                 ->info('Flag defines whether to fetch deleted entries during incremental poll or not')
-                                ->defaultValue(true)
+                                ->defaultValue(false)
                             ->end()
                             ->arrayNode('sync')
                                 ->addDefaultsIfNotSet()
