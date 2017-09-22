@@ -66,8 +66,9 @@ class AdPollerExtension extends Extension
 
         $definition->setArguments([
             new Reference($ldapDefinitionId),
-            $config['entry_filter']['full_sync'],
-            $config['entry_filter']['incremental_sync'],
+            isset($config['entry_filter']['full_sync']) ? $config['entry_filter']['full_sync'] : null,
+            isset($config['entry_filter']['incremental_sync']) ? $config['entry_filter']['incremental_sync'] : null,
+            isset($config['entry_filter']['deleted_sync']) ? $config['entry_filter']['deleted_sync'] : null,
             $config['entry_attributes_to_fetch'],
         ]);
 
