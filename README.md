@@ -28,4 +28,3 @@ It is possible to generate schema using doctrine console utils:
 ```php
 app/console doctrine:schema:create --dump-sql
 ```
-Also execute [init_data.sql](https://github.com/GlobalTradingTechnologies/ad-poller/blob/master/res/init_data.sql) to fill database initially
