@@ -160,6 +160,11 @@ class AdPollerExtension extends Extension
                 $name
             ]
         );
+        if ($this->isConfigEnabled($container, $pollerConfig['logging'])) {
+            $incAttrsToLog = $pollerConfig['logging']['incremental_entry_attributes_to_log'];
+            $pollerDefinition->addTag('monolog.logger', ['channel' => 'adpoller']);
+            $pollerDefinition->addMethodCall('setupLogging', [new Reference('logger'), $incAttrsToLog]);
+        }
 
         $id = "gtt.ad_poller.poller.$name";
         $container->setDefinition($id, $pollerDefinition);
