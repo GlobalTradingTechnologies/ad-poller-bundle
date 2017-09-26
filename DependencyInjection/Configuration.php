@@ -110,7 +110,14 @@ class Configuration implements ConfigurationInterface
                                         ->isRequired()
                                         ->info('AD sync type. For now only event dispatching syncing is supported')
                                         ->defaultValue('events')
-                                        ->values(array('events'))
+                                        // This hack is used describe type with enumNode
+                                        // Since 2.7 do not support enum nodes with one choice
+                                        // TODO remove this after bumping to 2.8+
+                                        ->values(array('events', 'noop'))
+                                        ->validate()
+                                            ->ifNotInArray(array('events'))
+                                            ->thenInvalid('Invalid sync type')
+                                        ->end()
                                     ->end()
                                 ->end()
                             ->end()
