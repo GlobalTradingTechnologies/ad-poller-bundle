@@ -15,7 +15,7 @@
         <service id="gtt.ad_poller.poller.prototype" class="Gtt\ADPoller\Poller" public="false" abstract="true" />
 
         <service id="gtt.ad_poller.ldap.fetcher.prototype" class="Gtt\ADPoller\Fetch\LdapFetcher" public="false" abstract="true" />
-        <service id="gtt.ad_poller.ldap.prototype" class="Zend\Ldap\Ldap" public="false" abstract="true" />
+        <service id="gtt.ad_poller.ldap.prototype" class="Laminas\Ldap\Ldap" public="false" abstract="true" />
 
         <service
                 id="gtt.ad_poller.synchronizer.events.prototype"
